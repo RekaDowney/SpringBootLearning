@@ -1,5 +1,7 @@
+# SpringBoot 项目
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+.mvn/
 
 src/test/
 
