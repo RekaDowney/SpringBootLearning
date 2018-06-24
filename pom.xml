@@ -27,7 +27,20 @@
     </properties>
 
     <dependencies>
-        <!-- MyBatis + Druid + MySQL -->
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>me.junbin.commons</groupId>
+            <artifactId>commons-utility</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+<!--
+        &lt;!&ndash; MyBatis + Druid + MySQL &ndash;&gt;
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -43,23 +56,14 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- MyBatis + Druid + MySQL -->
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>me.junbin.commons</groupId>
-            <artifactId>commons-utility</artifactId>
-            <version>1.2.4</version>
-        </dependency>
+        &lt;!&ndash; MyBatis + Druid + MySQL &ndash;&gt;
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-integration</artifactId>
         </dependency>
+-->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
