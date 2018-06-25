@@ -26,7 +26,7 @@
  | SpEL     | 不支持                                      | 支持                                       |
  | JSR303校验 | 支持，通过@Validated开启，由ConfigurationPropertiesBindingPostProcessor处理器执行校验 | 不支持                                      |
 
-如果遇到`@ConfigurationProperties`注入失败的情况，可以考虑在需要注入的类上添加注解`@EnableConfigurationProperties(XxxProperties.class)`。
+如果`@ConfigurationProperties`没有与`@Configuration`一起使用，那么在需要注入的类上可以通过添加注解`@EnableConfigurationProperties(XxxProperties.class)`来启动该配置加载。参考：`org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration`和`org.springframework.boot.autoconfigure.http.HttpEncodingProperties`。
 
 特别注意：`@PropertySource`不支持导入`yml`配置文件，只支持导入`properties`文件。
 
@@ -136,6 +136,21 @@
 - jar 包内的 application.properties 和 application.yml 配置文件
 
 注意：使用`mvn clean package`打包的时候，`${projectBasePath}/config`目录不会被打包到`jar`文件中。
+
+`SpringBoot`自动加载过程：
+
+通过 @EnableAutoConfiguration 开启自动配置有以下基本流程：
+    org.springframework.boot.autoconfigure.AutoConfigurationImportSelector.selectImports#96
+        org.springframework.boot.autoconfigure.AutoConfigurationImportSelector.getCandidateConfigurations#156
+            org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames 加载 SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION（扫描 classpath 下所有 jar 包中的 META-INF/spring.factories 文件）
+                加载 org.springframework.boot.autoconfigure.EnableAutoConfiguration 对应的配置项（M:/Software/Env/Apache/Maven/repository/org/springframework/boot/spring-boot-autoconfigure/2.0.2.RELEASE/spring-boot-autoconfigure-2.0.2.RELEASE.jar!/META-INF/spring.factories:18）
+                    org.springframework.boot.autoconfigure.AutoConfigurationImportSelector.fireAutoConfigurationImportEvents 加载 XxxAutoConfiguration 配置
+
+以`org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration`介绍自动配置：
+    加载`org.springframework.boot.autoconfigure.http.HttpEncodingProperties`配置类，从配置文件中读取`spring.http.encoding`前缀的配置项到该属性配置类中。
+    首先通过三个条件注解`ConditionalOnWebApplication`、`ConditionalOnClass`、`ConditionalOnProperty`判定是否可以加载该配置，是则执行下一步；
+    判断是否已经配置了`haracterEncodingFilter`，没有则执行`HttpEncodingAutoConfiguration#characterEncodingFilter`方法生成配置类
+
 
 [external-config-priority]: https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/#boot-features-external-config "配置项优先级"
 
