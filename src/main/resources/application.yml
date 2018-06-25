@@ -1,0 +1,19 @@
+server:
+  port: 80
+spring:
+  profiles:
+    active: dev
+
+---
+
+## dev 环境配置文档
+
+spring:
+  profiles: dev
+
+---
+
+## prod 环境配置文档
+
+spring:
+  profiles: prod

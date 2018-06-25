@@ -1,0 +1,2 @@
+current: ${projectBasePath:ProjectBasePath}/config/application.yml
+first: first-priority
