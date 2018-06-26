@@ -1,5 +1,19 @@
 # SpringBoot 学习笔记
 
+## SpringBoot 配置相关文件
+
+- 基本配置
+    - spring-boot 依赖 /META-INF/spring-configuration-metadata.json
+    - spring-boot 依赖 /META-INF/additional-spring-configuration-metadata.json
+    - spring-boot 依赖 /META-INF/spring.factories
+    - spring-boot-autoconfigure 依赖 /META-INF/spring-configuration-metadata.json
+    - spring-boot-autoconfigure 依赖 /META-INF/additional-spring-configuration-metadata.json
+    - spring-boot-autoconfigure 依赖 /META-INF/spring.factories
+- 日志
+    - logback
+        - spring-boot 依赖下的整个 org.springframework.boot.logging.logback 包
+        - DefaultLogbackConfiguration#base 提供了 clr、wex、wEx 等 conversionRule 转换器配置
+
 ## SpringBoot 自动配置
 
 `SpringBoot`自动配置会根据`classpath`（类路径）下的`jar`依赖自动配置`Spring`应用，比如`classpath`下存在`SpringWebMvc`依赖，那么`SpringBoot`会自动配置`org.springframework.web.filter.CharacterEncodingFilter`和`org.springframework.web.servlet.DispatcherServlet`等容器`Bean`。
@@ -151,6 +165,100 @@
     首先通过三个条件注解`ConditionalOnWebApplication`、`ConditionalOnClass`、`ConditionalOnProperty`判定是否可以加载该配置，是则执行下一步；
     判断是否已经配置了`haracterEncodingFilter`，没有则执行`HttpEncodingAutoConfiguration#characterEncodingFilter`方法生成配置类
 
+## SpringBoot 日志
+
+### slf4j
+
+ slf4j 是一款 Java 简单日志门面，其遵循的基本思维为：由 slf4j 提供日志接口规范（整体抽象），用户可以使用不同的具体日志实现框架，最终实现日志功能整体汇总。
+ 
+ 常见的日志规范与具体日志实现框架如下：
+
+| 日志规范                                  | 日志具体实现框架    |
+| ------------------------------------- | ------- |
+| SLF4J（Simple Logging Facade for Java）<br/> Jakarta Commons Logging（JCL） <br/> JBoss Logging | Logback <br/> log4j <br/> log4j2 <br/> JUL（java.util.logging） |
+
+开发中通常是选定一种日志规范以及一种日志具体实现框架，然后通过桥接器将其他依赖框架中的日志实现框架桥接到所使用的日志规范中。
+
+推荐使用 slf4j 和 logback 组合，这也是 SpringBoot 的默认日志框架，我们可以借助 IDEA 的依赖分析工具（在 pom.xml 文件中右键 Diagrams > Show Dependencies 进行分析）
+
+只要选择了 slf4j 日志门面，那么 slf4j-api.jar 依赖就是必须的
+
+slf4j 支持以下几种日志实现框架
+
+|  日志具体实现框架                                 | 依赖    |
+| ------------------------------------- | ------- |
+| logback | 原生支持，只需要引入 logback-classic 和 logback-core，不需要适配器层 |
+| jul | 需要引入 slf4j-jdk14 适配器层 |
+| log4j | 除了 log4j 依赖外，还需要 slf4j-log4j12 适配器层 |
+| log4j2 | 除了 log4j-api 和 log4j-core 依赖外，还需要 log4j-slf4j-impl 适配器层 |
+
+特别注意：只能选择一种日志具体实现框架，选定后，其余的日志实现框架依赖不能出现在项目依赖中，同时建议将其余日志实现框架通过桥接器桥接到 slf4j 做统一管理（这是为了避免项目依赖库中使用了其他日志实现框架）
+
+slf4j 提供了以下几种桥接器：
+
+| 桥接器依赖                                 | 桥接功能    |
+| ------------------------------------- | ------- |
+| jul-to-slf4j | 将 java.util.logging 日志桥接到 slf4j |
+| log4j-over-slf4j | 将 log4j 日志桥接到 slf4j |
+| log4j-to-slf4j | 将 log4j2 日志桥接到 slf4j |
+| jcl-over-slf4j | 将 jcl 日志规范桥接到 slf4j |
+
+针对 jcl 日志规范， slf4j 还提供了相应的委托器和桥接器，委托器 slf4j-jcl 可以将 slf4j 日志委托给 jcl ；桥接器 jcl-over-slf4j 可以将 jcl 日志桥接到 slf4j 。
+特别注意： slf4j-jcl 和 jcl-over-slf4j 依赖不可以同时出现，否则会形成环形，造成日志记录出问题。
+同理：如果使用了 log4j 日志实现框架（ slf4j-log4j12 依赖），那么就不能添加 log4j-over-slf4j 桥接器依赖，如果添加了 log4j-over-slf4j 桥接器依赖，就不能选择 log4j 作为日志实现框架。对于其他日志实现框架也有相同的限制。
+
+ spring-boot-starter-web 依赖会优先检测 classpath 下是否存在 log4j2 依赖，存在则使用 log4j2 作为日志实现，否则尝试加载 slf4j 作为日志实现，如果都没有，则使用 jul 作为日志实现。
+这一块的配置可以参考： org.apache.commons.logging.LogFactory 的静态初始化块
+ 
+### SpringBoot 日志配置
+
+默认 SpringBoot 采用 slf4j 和 logback 的组合，关于日志的配置项有：
+
+```properties
+
+## 指定日志实现框架的配置文件路径，可以使用 classpath: 前缀或者 file: 文件协议，默认为空串
+# LoggingApplicationListener#initializeSystem:262
+logging.config=
+# 指定日志文件存储路径，比如 /var/log
+# 参考：spring-boot 依赖中的 /META-INF/additional-spring-configuration-metadata.json:71 或者 /META-INF/spring-configuration-metadata.json:204
+logging.path=
+# 指定日志文件存储名称，比如 springboot.log
+# 参考：spring-boot 依赖中的 /META-INF/additional-spring-configuration-metadata.json:97 或者 /META-INF/spring-configuration-metadata.json:230
+logging.file=
+
+## 文件滚动策略为 10MB 一个文件
+# DefaultLogbackConfiguration#setRollingPolicy:145
+logging.file.max-size=10MB
+## 最多保留多少个归档文件（0 表示不限制归档文件数量），归档文件默认格式为 ${logFile}.%d{yyyy-MM-dd}.%i.gz
+# DefaultLogbackConfiguration#setRollingPolicy:146
+logging.file.max-history=0
+## 日志级别的格式，默认为 %5p
+# LogbackLoggingSystem#loadDefaults:133
+logging.pattern.level=%-5p
+## 日志记录时间的格式，默认为 yyyy-MM-dd HH:mm:ss.SSS
+# LogbackLoggingSystem#loadDefaults:136
+logging.pattern.dateformat=yyyy-MM-dd HH:mm:ss.SSS
+## 控制台日志记录格式，默认值参考：DefaultLogbackConfiguration#CONSOLE_LOG_PATTERN
+## DefaultLogbackConfiguration#consoleAppender:116
+#logging.pattern.console=
+## 文件日志记录格式，默认值参考：DefaultLogbackConfiguration#FILE_LOG_PATTERN
+## DefaultLogbackConfiguration#fileAppender:129
+#logging.pattern.file=
+## 是否注册当 JVM 退出时关闭日志系统的钩子方法，默认为 false
+# LoggingApplicationListener#registerShutdownHookIfNecessary:331
+logging.register-shutdown-hook=true
+## logging.level.root 指定根日志记录器的日志记录级别，默认为 info
+# 参考：spring-boot 依赖中的 org/springframework/boot/logging/logback/base.xml:12
+logging.level.root=info
+## logging.level.packageOrClass 配置指定包或者类的日志记录级别
+logging.level.org.hibernate=error
+
+## 强制打开 ansi 彩色输出，默认值为 detect，会自动检测终端是否支持 ansi
+spring.output.ansi.enabled=always
+
+```
+ 
+### 超链接
 
 [external-config-priority]: https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/#boot-features-external-config "配置项优先级"
 
