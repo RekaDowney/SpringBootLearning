@@ -7,7 +7,7 @@ import ch.qos.logback.core.pattern.PatternLayoutEncoderBase;
 
 /**
  * @author : Zhong Junbin
- * @email : <a href="mailto:zhongjunbin@chinamaincloud.com">发送邮件</a>
+ * @email : <a href="mailto:rekadowney@gmail.com">发送邮件</a>
  * @createDate : 2018/6/26 21:29
  * @description : 参考 {@link PatternLayoutEncoder}，使用自定义的 PatternLayout。
  * 在 logback.xml 中，可以将 encoder#class 字段修改为 me.junbin.learning.springboot.logback.CustomPatternLayoutEncoder

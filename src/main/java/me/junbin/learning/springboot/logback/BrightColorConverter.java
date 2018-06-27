@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * @author : Zhong Junbin
- * @email : <a href="mailto:zhongjunbin@chinamaincloud.com">发送邮件</a>
+ * @email : <a href="mailto:rekadowney@gmail.com">发送邮件</a>
  * @createDate : 2018/6/26 21:24
  * @description : 参考 {@link ColorConverter} 并将所有颜色都改成亮色调
  */

@@ -7,7 +7,7 @@ import org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverte
 
 /**
  * @author : Zhong Junbin
- * @email : <a href="mailto:zhongjunbin@chinamaincloud.com">发送邮件</a>
+ * @email : <a href="mailto:rekadowney@gmail.com">发送邮件</a>
  * @createDate : 2018/6/26 21:19
  * @description : 继承 {@link PatternLayout}，添加颜色转换器快捷键，颜色转换器的具体使用方式可以参考：
  * <a href="https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/#boot-features-logging-color-coded-output">SpringBoot彩色日志</a>
