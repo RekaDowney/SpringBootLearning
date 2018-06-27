@@ -26,7 +26,7 @@ deploy/
 # 日志和日志目录
 *.log
 # log/
-# logs/
+logs/
 
 # maven测试文件目录
 # */src/test/
