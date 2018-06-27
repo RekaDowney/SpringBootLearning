@@ -1,5 +1,6 @@
 package me.junbin.learning.springboot.service;
 
+import me.junbin.learning.springboot.constant.AppConstant;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ import static me.junbin.commons.ansi.ColorfulPrinter.green;
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@ActiveProfiles("dev")
-//@ActiveProfiles("prod")
+@ActiveProfiles(AppConstant.Profiles.DEV)
+//@ActiveProfiles(AppConstant.Profiles.PROD)
 public class TestLogging {
 
     @Autowired
