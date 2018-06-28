@@ -32,7 +32,8 @@
 
         <encoder class="me.junbin.learning.springboot.logback.CustomPatternLayoutEncoder">
             <pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %brightClr(%class#%M:%line){green} %msg%n
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %X{requestId} %brightClr([%X{user}]){magenta} %highlight(%-5level)
+                %brightClr(%class#%M:%line){green} %msg%n
             </pattern>
             <charset class="java.nio.charset.Charset">${logCharset}</charset>
             <immediateFlush/>
@@ -54,7 +55,8 @@
 
             <encoder class="me.junbin.learning.springboot.logback.CustomPatternLayoutEncoder">
                 <pattern>
-                    %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %brightClr(%class#%M:%line){green} %msg%n
+                    %d{yyyy-MM-dd HH:mm:ss.SSS} %X{requestId} %brightClr([%X{user}]){magenta} %highlight(%-5level)
+                    %brightClr(%class#%M:%line){green} %msg%n
                 </pattern>
                 <charset class="java.nio.charset.Charset">${logCharset}</charset>
                 <immediateFlush/>

@@ -1,13 +1,16 @@
 package me.junbin.learning.springboot.service;
 
 import me.junbin.commons.gson.Gsonor;
+import me.junbin.learning.springboot.domain.LogbackUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author : Zhong Junbin
@@ -19,26 +22,26 @@ import java.util.Random;
 public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private static final List<Object> DB = new ArrayList<>();
+    private static final Map<Long, LogbackUser> DB = new ConcurrentHashMap<>();
 
-    public void insert(Object user) {
+    public void insert(LogbackUser user) {
         LOGGER.info("入库：{}", Gsonor.SIMPLE.toJson(user));
-        DB.add(user);
+        DB.put(user.getId(), user);
     }
 
-    public Object randomGet() {
+    public LogbackUser randomGet() {
         int index = new Random().nextInt(DB.size());
         LOGGER.debug("随机获取索引为 {} 的用户", index);
-        return DB.get(index);
+        return new ArrayList<>(DB.values()).get(index);
     }
 
-    public void delete(Object user) {
+    public void delete(LogbackUser user) {
         LOGGER.info("删除：{}", Gsonor.SIMPLE.toJson(user));
-        DB.remove(user);
+        DB.remove(user.getId());
     }
 
-    public List<Object> findAll() {
-        return new ArrayList<>(DB);
+    public List<LogbackUser> findAll() {
+        return new ArrayList<>(DB.values());
     }
 
 }

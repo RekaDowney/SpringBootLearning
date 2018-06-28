@@ -1,15 +1,13 @@
 package me.junbin.learning.springboot.service;
 
 import me.junbin.learning.springboot.constant.AppConstant;
+import me.junbin.learning.springboot.domain.LogbackUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static me.junbin.commons.ansi.ColorfulPrinter.green;
 
@@ -28,20 +26,13 @@ public class TestLogging {
     @Autowired
     private UserService userService;
 
-    private Map<String, Object> newUser(int id, String name) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("id", id);
-        user.put("name", name);
-        return user;
-    }
-
     @Test
     public void test01() throws Exception {
-        Map<String, Object> reka = newUser(1, "Reka");
+        LogbackUser reka = new LogbackUser(1L, "Reka");
         userService.insert(reka);
-        Map<String, Object> lily = newUser(2, "Lily");
+        LogbackUser lily = new LogbackUser(2L, "Lily");
         userService.insert(lily);
-        Map<String, Object> rachel = newUser(3, "Rachel");
+        LogbackUser rachel = new LogbackUser(3L, "Rachel");
         userService.insert(rachel);
 
         Object user = userService.randomGet();

@@ -13,4 +13,8 @@ public class AppConstant {
         public static final String PROD = "prod";
     }
 
+    public static class Web {
+        public static final String SESSION_USER = "sessionUser";
+    }
+
 }
