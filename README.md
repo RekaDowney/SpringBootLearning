@@ -324,6 +324,16 @@ spring.output.ansi.enabled=always
 
 `springProperty`标签类似于`logback`的`property`标签。当`logback`的`property`标签还支持`resource`属性或者`file`属性引入`properties`文件
 
+### MDC 增强日志记录
+
+`slf4j`提供了`MDC`模块以增强日志记录功能，比如我们想要在日志中记录当前登陆的用户名或者`IP`并标记本次请求的所有相关日志以方便追踪，那么可以通过`MDC`模块很方便的实现该功能。
+
+`MDC`的基本原理是将变量绑定到当前线程中（通常是 ThreadLocal<Map<String, String>> 技术），结合`Tomcat`会给每个请求分配在单独的线程中处理，因此完全可以做到隔离效果。
+
+采用`SpringMVC`的`org.springframework.web.servlet.HandlerInterceptor`，可以在`HandlerInterceptor#preHandle`方法中将变量写入到`org.slf4j.MDC`中，并在`HandlerInterceptor#afterCompletion`方法中释放当前线程设置的变量（避免线程复用对其他线程可能造成的污染）。
+ 
+为`MDC`设置了变量之后，可以直接在`logback`的配置文件中使用 %X{variableName} 方式获取该变量值并直接写入到变量中
+
 ### 超链接
 
 [external-config-priority]: https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/#boot-features-external-config "配置项优先级"
