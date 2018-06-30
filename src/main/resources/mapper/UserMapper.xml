@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.junbin.learning.springboot.repository.UserRepo">
+
+    <insert id="insert" parameterType="user">
+        INSERT INTO USER (NAME) VALUES (#{name})
+        <selectKey resultType="long" statementType="STATEMENT" keyProperty="id" keyColumn="ID">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <sql id="userColumn">
+        ${USER}.ID   userId,
+        ${USER}.NAME username
+    </sql>
+
+    <select id="findById" resultMap="userResultMap">
+        SELECT
+        <include refid="userColumn">
+            <property name="USER" value="U"/>
+        </include>
+        FROM USER U
+        WHERE U.ID = #{id}
+    </select>
+
+    <resultMap id="userResultMap" type="user">
+        <id property="id" column="userId"/>
+        <result property="name" column="username"/>
+    </resultMap>
+
+</mapper>
